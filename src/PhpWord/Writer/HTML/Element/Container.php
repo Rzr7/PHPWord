@@ -51,6 +51,33 @@ class Container extends AbstractElement
         $elements = $container->getElements();
         foreach ($elements as $element) {
             $elementClass = get_class($element);
+            if ($elementClass == "PhpOffice\PhpWord\Element\ListItem") {
+				if (!$wasListItem) {
+					$nestedCount++;
+					// open first ul
+					$content .= '<ul data-depth="'.$element->getDepth().'">';
+					$lastDepth = $element->getDepth();
+				}
+				if ($element->getDepth() > $lastDepth) {
+					$nestedCount++;
+					// open nested ul
+					$lastDepth = $element->getDepth();
+					$content .= '<ul data-depth="'.$element->getDepth().'>';
+				} else if ($element->getDepth() < $lastDepth) {
+					// close nested ul
+					$nestedCount--;
+					$lastDepth = $element->getDepth();
+					$content .= '</ul>';
+				}
+				$wasListItem = true;
+            } else if ($elementClass != "PhpOffice\PhpWord\Element\ListItem" && $wasListItem) {
+				// Previous list item was last, close all uls
+				for ($i = 0; $i < $nestedCount; $i++) {
+					$content .= '</ul>';
+				}
+				$wasListItem = false;
+			}
+            
             $writerClass = str_replace('PhpOffice\\PhpWord\\Element', $this->namespace, $elementClass);
             if (class_exists($writerClass)) {
                 /** @var \PhpOffice\PhpWord\Writer\HTML\Element\AbstractElement $writer Type hint */
