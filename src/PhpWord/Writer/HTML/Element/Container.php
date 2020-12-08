@@ -55,7 +55,7 @@ class Container extends AbstractElement
 				if (!$wasListItem) {
 					$nestedCount++;
 					// open first ul
-					$content .= '<ul">';
+					$content .= '<ul>';
 					$lastDepth = $element->getDepth();
 				}
 				if ($element->getDepth() > $lastDepth) {
