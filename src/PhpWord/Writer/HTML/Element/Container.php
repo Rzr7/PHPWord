@@ -55,14 +55,14 @@ class Container extends AbstractElement
 				if (!$wasListItem) {
 					$nestedCount++;
 					// open first ul
-					$content .= '<ul data-depth="'.$element->getDepth().'">';
+					$content .= '<ul">';
 					$lastDepth = $element->getDepth();
 				}
 				if ($element->getDepth() > $lastDepth) {
 					$nestedCount++;
 					// open nested ul
 					$lastDepth = $element->getDepth();
-					$content .= '<ul data-depth="'.$element->getDepth().'>';
+					$content .= '<ul>';
 				} else if ($element->getDepth() < $lastDepth) {
 					// close nested ul
 					$nestedCount--;
