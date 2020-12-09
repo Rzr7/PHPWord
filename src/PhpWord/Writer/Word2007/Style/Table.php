@@ -41,7 +41,7 @@ class Table extends AbstractStyle
     {
         $style = $this->getStyle();
         $xmlWriter = $this->getXmlWriter();
-
+	
         if ($style instanceof TableStyle) {
             $this->writeStyle($xmlWriter, $style);
         } elseif (is_string($style)) {

@@ -531,6 +531,15 @@ class Html
                 case 'background-color':
                     $styles['bgColor'] = trim($cValue, '#');
                     break;
+                case 'padding-left':
+                    $styles['cellMarginLeft'] = Converter::cssToTwip($cValue);
+                    $styles['marginLeft'] = Converter::cssToPoint($cValue);
+                    $styles['left'] = Converter::cssToPoint($cValue);
+                    break;
+                case 'padding-right':
+                    $styles['cellMarginRight'] = Converter::cssToTwip($cValue);
+                    $styles['marginRight'] = Converter::cssToPoint($cValue);
+                    break;
                 case 'line-height':
                     $matches = array();
                     if (preg_match('/([0-9]+\.?[0-9]*[a-z]+)/', $cValue, $matches)) {
@@ -573,9 +582,11 @@ class Html
                     break;
                 case 'margin-top':
                     $styles['spaceBefore'] = Converter::cssToPoint($cValue);
+                    $styles['cellMarginTop'] = Converter::cssToTwip($cValue);
                     break;
                 case 'margin-bottom':
                     $styles['spaceAfter'] = Converter::cssToPoint($cValue);
+										$styles['cellMarginBottom'] = Converter::cssToTwip($cValue);
                     break;
                 case 'border-color':
                     $styles['color'] = trim($cValue, '#');
@@ -607,7 +618,6 @@ class Html
                     break;
             }
         }
-
         return $styles;
     }
 

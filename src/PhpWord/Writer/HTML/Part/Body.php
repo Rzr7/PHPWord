@@ -49,10 +49,6 @@ class Body extends AbstractPart
 
         $this->pageParams = new PageParams($section->getStyle());
 
-        $content .= '<body>' . PHP_EOL;
-        $content .= '<div class="wrapper" style="width: '. $this->pageParams->getWidth() .'px; '
-                 . ' margin-left: auto; margin-right: auto;">' . PHP_EOL;
-
         foreach ($sections as $section) {
             $elementsPages = [];
             $page = 0;
@@ -72,8 +68,6 @@ class Body extends AbstractPart
             }
 
         }
-
-        $content .= '</div></body>' . PHP_EOL;
 
         return $content;
     }

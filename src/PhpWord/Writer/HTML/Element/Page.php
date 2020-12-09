@@ -39,19 +39,9 @@ class Page extends Container
     public function write()
     {
         $this->pageParams= $this->parentWriter->getWriterPart('body')->getPageParams();
-
-        $content = '<div class="page" style="width: '.  $this->pageParams->getWidth() .'px;'
-            . ' min-height: ' .  $this->pageParams->getHeight()  .'px;position:relative;">';
-        $content .= $this->writeHeader();
-        $content .= '<div class="content" style="width: '.  $this->pageParams->getContentWidth() .'px; '
-            . 'padding-left: ' . $this->pageParams->getMarginLeft(). 'px;'
-            . 'padding-right: ' . $this->pageParams->getMarginRight() . 'px;">';
+        
         $writer = new Container($this->parentWriter, $this->element);
         $content .= $writer->write();
-        $content .= $this->writeNotes();
-        $content .= '</div>';
-        $content .= $this->writeFooter();
-        $content .= '</div>';
 
         return $content;
     }

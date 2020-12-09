@@ -103,11 +103,23 @@ class ListItemRun extends Container
         $hanging = Converter::twipToPixel($totalStyle->getHanging());
         $padding = Converter::twipToPixel($totalStyle->getLeft()) - $hanging;
 
-        //return '<p style="text-align: ' . $totalStyle->getAlign() . '; padding-left: ' . Converter::twipToPixel($totalStyle->getHanging() * $level) . 'px;"><span>' . $text . '</span>' . $content . '</p>';
+				$parentParagraphStyle = $this->element->getParagraphStyle();
+				$parentAlignment = $parentParagraphStyle->getAlignment() ?: 'left';
+				$parentSpacing = $parentParagraphStyle->getSpace();
+				if (!is_null($parentSpacing)) {
+					$before = $parentSpacing->getBefore();
+					$after = $parentSpacing->getAfter();
+					$css['margin-top'] = !is_null($before) ? ($before / 20).'pt' : '0';
+					$css['margin-bottom'] = !is_null($after) ? ($after / 20).'pt' : '0';
+				} else {
+					$css['margin-top'] = '0';
+					$css['margin-bottom'] = '0';
+				}
+
+        //return "<p style='text-align: {$parentAlignment}; padding-left: {$padding}px;margin-top: {$css['margin-top']};margin-bottom: {$css['margin-bottom']};'><span>" . $text . '</span>' . $content . '</p>';
         //return "<div style=\"text-align: $parentAlignment; padding-left:{$padding}px;margin-top: 0;float: left;width: 100%;\"><div style='float:left;width: 1%;white-space:nowrap;'>$text</div><div style='float: left;width: 95%;'>$content</div></div>";
-        $parentParagraphStyle = $this->element->getParagraphStyle();
-        $parentAlignment = $parentParagraphStyle->getAlignment() ?: 'left';
-        return "<table style='text-align: $parentAlignment;padding-left:{$padding}px;width: 100%;margin-top: 0;vertical-align: top;border: none;'><tr><td style='vertical-align: top;border: none;width: 1%;white-space:nowrap;'>$text</td><td style='vertical-align: top;border: none;'>$content</td></tr></table>";
+
+        return "<table style='text-align: $parentAlignment;padding-left:{$padding}px;width: 100%;margin-top: {$css['margin-top']};margin-bottom: {$css['margin-bottom']};vertical-align: top;border: none;display:block;'><tr><td style='vertical-align: top;border: none;width: 1%;white-space:nowrap;'>$text</td><td style='vertical-align: top;border: none;'>$content</td></tr></table>";
     }
 
     /**
