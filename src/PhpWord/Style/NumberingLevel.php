@@ -43,6 +43,8 @@ class NumberingLevel extends AbstractStyle
      */
     private $start = 1;
 
+    private $currentValue;
+
     /**
      * Numbering format w:numFmt, one of PhpOffice\PhpWord\SimpleType\NumberFormat
      *
@@ -171,6 +173,38 @@ class NumberingLevel extends AbstractStyle
 
         return $this;
     }
+
+    /**
+     * Get current value
+     *
+     * @return int
+     */
+    public function getCurrentValue()
+    {
+        if (empty($this->currentValue)) {
+            $this->currentValue = $this->start + 1;
+        }
+
+        return $this->currentValue;
+    }
+
+    /**
+     * Set current value
+     *
+     * @param int|null $value
+     * @return self
+     */
+    public function setCurrentValue($value)
+    {
+        if ($value === null) {
+            $this->currentValue = null;
+        } else {
+            $this->currentValue = $this->setIntVal($value, $this->currentValue);
+        }
+
+        return $this;
+    }
+
 
     /**
      * Get format

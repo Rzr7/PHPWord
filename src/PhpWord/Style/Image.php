@@ -55,6 +55,22 @@ class Image extends Frame
     const POSITION_ABSOLUTE = self::POS_ABSOLUTE;
     const POSITION_RELATIVE = self::POS_RELATIVE;
 
+    protected $borderColor;
+    protected $borderWidth;
+
+    protected $inline;
+    protected $anchor;
+    protected $simplePos;
+    protected $behindDoc;
+    protected $layoutInCell;
+    protected $allowOverlap;
+    protected $locked;
+
+    protected $top;
+    protected $left;
+
+    protected $noWrapMode = false;
+
     /**
      * Create new instance
      */
@@ -66,7 +82,6 @@ class Image extends Frame
         // Backward compatibility setting
         // @todo Remove on 1.0.0
         $this->setWrap(self::WRAPPING_STYLE_INLINE);
-        $this->setHPos(self::POSITION_HORIZONTAL_LEFT);
         $this->setHPosRelTo(self::POSITION_RELATIVE_TO_CHAR);
         $this->setVPos(self::POSITION_VERTICAL_TOP);
         $this->setVPosRelTo(self::POSITION_RELATIVE_TO_LINE);
@@ -273,6 +288,185 @@ class Image extends Frame
     {
         $this->setVPosRelTo($relto);
 
+        return $this;
+    }
+
+    /**
+     * @param $color
+     * @return $this
+     */
+    public function setBorderColor($color)
+    {
+        $this->borderColor = $color;
+        return $this;
+    }
+
+    /**
+     * @param $width
+     * @return $this
+     */
+    public function setBorderWidth($width)
+    {
+        $this->borderWidth = $width;
+        return $this;
+    }
+
+    public function getBorderColor()
+    {
+        return $this->borderColor;
+    }
+
+    public function getBorderWidth()
+    {
+        return $this->borderWidth;
+    }
+
+    /**
+     * @param bool $value
+     * @return $this
+     */
+    public function setNoWrapMode($value)
+    {
+        $this->noWrapMode = $value;
+        return $this;
+    }
+
+    public function getNoWrapMode()
+    {
+        return $this->noWrapMode;
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function getInline()
+    {
+        return $this->inline;
+    }
+
+    /**
+     * @param mixed $inline
+     *
+     * @return Image
+     */
+    public function setInline($inline)
+    {
+        $this->inline = $inline;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAnchor()
+    {
+        return $this->anchor;
+    }
+
+    /**
+     * @param mixed $anchor
+     *
+     * @return Image
+     */
+    public function setAnchor($anchor)
+    {
+        $this->anchor = $anchor;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSimplePos()
+    {
+        return $this->simplePos;
+    }
+
+    /**
+     * @param mixed $simplePos
+     *
+     * @return Image
+     */
+    public function setSimplePos($simplePos)
+    {
+        $this->simplePos = $simplePos;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBehindDoc()
+    {
+        return $this->behindDoc;
+    }
+
+    /**
+     * @param mixed $behindDoc
+     *
+     * @return Image
+     */
+    public function setBehindDoc($behindDoc)
+    {
+        $this->behindDoc = $behindDoc;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLayoutInCell()
+    {
+        return $this->layoutInCell;
+    }
+
+    /**
+     * @param mixed $layoutInCell
+     *
+     * @return Image
+     */
+    public function setLayoutInCell($layoutInCell)
+    {
+        $this->layoutInCell = $layoutInCell;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAllowOverlap()
+    {
+        return $this->allowOverlap;
+    }
+
+    /**
+     * @param mixed $allowOverlap
+     *
+     * @return Image
+     */
+    public function setAllowOverlap($allowOverlap)
+    {
+        $this->allowOverlap = $allowOverlap;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLocked()
+    {
+        return $this->locked;
+    }
+
+    /**
+     * @param mixed $locked
+     *
+     * @return Image
+     */
+    public function setLocked($locked)
+    {
+        $this->locked = $locked;
         return $this;
     }
 }

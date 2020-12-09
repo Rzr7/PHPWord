@@ -28,6 +28,9 @@ use Zend\Escaper\Escaper;
  */
 abstract class AbstractElement
 {
+    protected $expectedHeight = 0;
+    protected $expectedWidth = 0;
+
     /**
      * Parent writer
      *

@@ -69,7 +69,7 @@ class HTML extends AbstractWriter implements WriterInterface
      */
     public function save($filename = null)
     {
-        $this->writeFile($this->openFile($filename), $this->getContent());
+        $this->writeFile($this->openFile($filename), $this->getMinifiedContent());
     }
 
     /**
@@ -90,6 +90,21 @@ class HTML extends AbstractWriter implements WriterInterface
         $content .= '</html>' . PHP_EOL;
 
         return $content;
+    }
+
+    public function getMinifiedContent()
+    {
+        return preg_replace(
+            array(
+                '/ {2,}/',
+                '/<!--.*?-->|\t|(?:\r?\n[ \t]*)+/s'
+            ),
+            array(
+                ' ',
+                ''
+            ),
+            $this->getContent()
+        );
     }
 
     /**
@@ -120,7 +135,9 @@ class HTML extends AbstractWriter implements WriterInterface
      */
     public function addNote($noteId, $noteMark)
     {
-        $this->notes[$noteId] = $noteMark;
+        if (!in_array($noteMark, $this->notes)) {
+            $this->notes[$noteId] = $noteMark;
+        }
     }
 
     /**

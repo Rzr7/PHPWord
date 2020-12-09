@@ -115,6 +115,20 @@ class Table extends Border
     private $borderInsideVSize;
 
     /**
+     * Border size inside vertical
+     *
+     * @var string
+     */
+    private $borderInsideVStyle;
+
+    /**
+     * Border size inside horizontal
+     *
+     * @var string
+     */
+    private $borderInsideHStyle;
+
+    /**
      * Border color inside vertical
      *
      * @var string
@@ -169,14 +183,6 @@ class Table extends Border
      * @var int[]
      */
     private $columnWidths;
-
-    /**
-     * Visually Right to Left Table
-     *
-     * @see  http://www.datypic.com/sc/ooxml/e-w_bidiVisual-1.html
-     * @var bool
-     */
-    private $bidiVisual = false;
 
     /**
      * Create new table style
@@ -333,6 +339,26 @@ class Table extends Border
     }
 
     /**
+     * Get border style inside horizontal
+     *
+     * @return string
+     */
+    public function getBorderInsideHStyle()
+    {
+        return $this->getTableOnlyProperty('borderInsideHStyle');
+    }
+
+    /**
+     * Get border style inside vertical
+     *
+     * @return string
+     */
+    public function getBorderInsideVStyle()
+    {
+        return $this->getTableOnlyProperty('borderInsideVStyle');
+    }
+
+    /**
      * Set border size inside horizontal
      *
      * @param int $value
@@ -383,6 +409,28 @@ class Table extends Border
     public function setBorderInsideVSize($value = null)
     {
         return $this->setTableOnlyProperty('borderInsideVSize', $value);
+    }
+
+    /**
+     * Set border style inside vertical
+     *
+     * @param string $value
+     * @return self
+     */
+    public function setBorderInsideVStyle($value = null)
+    {
+        return $this->setTableOnlyProperty('borderInsideVStyle', $value);
+    }
+
+    /**
+     * Set border style inside horizontal
+     *
+     * @param string $value
+     * @return self
+     */
+    public function setBorderInsideHStyle($value = null)
+    {
+        return $this->setTableOnlyProperty('borderInsideHStyle', $value);
     }
 
     /**
@@ -767,7 +815,7 @@ class Table extends Border
     /**
      * Get the columnWidths
      *
-     * @return null|int[]
+     * @return number[]
      */
     public function getColumnWidths()
     {
@@ -782,29 +830,5 @@ class Table extends Border
     public function setColumnWidths(array $value = null)
     {
         $this->columnWidths = $value;
-    }
-
-    /**
-     * Get bidiVisual
-     *
-     * @return bool
-     */
-    public function isBidiVisual()
-    {
-        return $this->bidiVisual;
-    }
-
-    /**
-     * Set bidiVisual
-     *
-     * @param bool $bidi
-     *            Set to true to visually present table as Right to Left
-     * @return self
-     */
-    public function setBidiVisual($bidi)
-    {
-        $this->bidiVisual = $bidi;
-
-        return $this;
     }
 }

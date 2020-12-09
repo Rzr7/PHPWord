@@ -64,7 +64,7 @@ class TextBox extends Image
      *
      * @var string
      */
-    private $borderColor;
+    protected $borderColor;
 
     /**
      * Set margin top.

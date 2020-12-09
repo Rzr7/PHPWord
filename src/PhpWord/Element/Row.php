@@ -31,7 +31,7 @@ class Row extends AbstractElement
      *
      * @var int
      */
-    private $height = null;
+    private $height;
 
     /**
      * Row style
@@ -46,6 +46,16 @@ class Row extends AbstractElement
      * @var \PhpOffice\PhpWord\Element\Cell[]
      */
     private $cells = array();
+
+    /**
+     * @var int
+     */
+    public $number;
+
+    /**
+     * @var int
+     */
+    public $width;
 
     /**
      * Create a new table row

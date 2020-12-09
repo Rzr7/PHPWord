@@ -41,23 +41,41 @@ class Word2007 extends AbstractReader implements ReaderInterface
         $phpWord = new PhpWord();
         $relationships = $this->readRelationships($docFile);
 
-        $steps = array(
-            array('stepPart' => 'document', 'stepItems' => array(
-                'styles'    => 'Styles',
-                'numbering' => 'Numbering',
-            )),
-            array('stepPart' => 'main', 'stepItems' => array(
-                'officeDocument'      => 'Document',
-                'core-properties'     => 'DocPropsCore',
-                'extended-properties' => 'DocPropsApp',
-                'custom-properties'   => 'DocPropsCustom',
-            )),
-            array('stepPart' => 'document', 'stepItems' => array(
-                'endnotes'  => 'Endnotes',
-                'footnotes' => 'Footnotes',
-                'settings'  => 'Settings',
-            )),
-        );
+        $relKeys = array_keys($relationships);
+        $documentStepPart = 'document';
+        foreach ($relKeys as $relKey) {
+            if (preg_match('/(^document\d+)$/ui', $relKey, $matches)) {
+                $documentStepPart = $matches[0];
+                break;
+            }
+        }
+
+        $steps = [
+            [
+                'stepPart'  => $documentStepPart,
+                'stepItems' => [
+                    'styles'    => 'Styles',
+                    'numbering' => 'Numbering',
+                ]
+            ],
+            [
+                'stepPart'  => 'main',
+                'stepItems' => [
+                    'officeDocument'      => 'Document',
+                    'core-properties'     => 'DocPropsCore',
+                    'extended-properties' => 'DocPropsApp',
+                    'custom-properties'   => 'DocPropsCustom',
+                ]
+            ],
+            [
+                'stepPart'  => $documentStepPart,
+                'stepItems' => [
+                    'endnotes'  => 'Endnotes',
+                    'footnotes' => 'Footnotes',
+                    'settings'  => 'Settings',
+                ]
+            ],
+        ];
 
         foreach ($steps as $step) {
             $stepPart = $step['stepPart'];
@@ -158,9 +176,11 @@ class Word2007 extends AbstractReader implements ReaderInterface
             $docPart = str_replace('.xml', '', $target);
 
             // Do not add prefix to link source
-            if ($type != 'hyperlink' && $mode != 'External') {
+            if ($type != 'hyperlink' && $mode != 'External' && $targetPrefix !== '' && strpos($target, $targetPrefix) === false) {
                 $target = $targetPrefix . $target;
             }
+
+            $target = trim($target, '/');
 
             // Push to return array
             $rels[$rId] = array('type' => $type, 'target' => $target, 'docPart' => $docPart, 'targetMode' => $mode);

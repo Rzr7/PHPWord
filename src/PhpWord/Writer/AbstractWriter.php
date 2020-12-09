@@ -93,6 +93,8 @@ abstract class AbstractWriter implements WriterInterface
      */
     private $tempFilename;
 
+    public $backgroundStyles = [];
+
     /**
      * Get PhpWord object
      *
@@ -220,7 +222,7 @@ abstract class AbstractWriter implements WriterInterface
 
         // Temporary file
         $this->originalFilename = $filename;
-        if (strpos(strtolower($filename), 'php://') === 0) {
+        if (strtolower($filename) == 'php://output' || strtolower($filename) == 'php://stdout') {
             $filename = tempnam(Settings::getTempDir(), 'PhpWord');
             if (false === $filename) {
                 $filename = $this->originalFilename; // @codeCoverageIgnore
@@ -432,5 +434,37 @@ abstract class AbstractWriter implements WriterInterface
     public function getUseDiskCaching()
     {
         return $this->isUseDiskCaching();
+    }
+
+    public function getBackgroundStyles($elementId)
+    {
+        if (empty($this->backgroundStyles)) {
+            return false;
+        }
+
+        $result = [];
+        $style = '<style>';
+        $className = "b_$elementId";
+        $result['className'] = $className;
+
+        $style .= '.' . $className . '{';
+
+        $allBackgroundStyles = [];
+
+        foreach ($this->backgroundStyles as $backgroundStyles) {
+            foreach ($backgroundStyles as $backgroundStyleName => $backgroundStyle) {
+                $allBackgroundStyles[$backgroundStyleName][] = $backgroundStyle;
+            }
+        }
+
+        foreach ($allBackgroundStyles as $backgroundStyleName => $backgroundStyle) {
+            $style .= $backgroundStyleName . ':' . implode(',', $backgroundStyle) . ';';
+        }
+
+        $style .= '}</style>';
+
+        $result['style'] = $style;
+
+        return $result;
     }
 }

@@ -17,8 +17,9 @@
 
 namespace PhpOffice\PhpWord\Writer\HTML\Part;
 
-use PhpOffice\PhpWord\Writer\HTML\Element\Container;
-use PhpOffice\PhpWord\Writer\HTML\Element\TextRun as TextRunWriter;
+use PhpOffice\PhpWord\Element\PageBreak;
+use PhpOffice\PhpWord\Writer\HTML\Element\Page;
+use PhpOffice\PhpWord\Writer\HTML\PageParams;
 
 /**
  * RTF body part writer
@@ -27,6 +28,12 @@ use PhpOffice\PhpWord\Writer\HTML\Element\TextRun as TextRunWriter;
  */
 class Body extends AbstractPart
 {
+
+    /**
+     * @var PageParams $pageParams
+     */
+    protected $pageParams;
+
     /**
      * Write part
      *
@@ -37,53 +44,45 @@ class Body extends AbstractPart
         $phpWord = $this->getParentWriter()->getPhpWord();
 
         $content = '';
+        $sections = $phpWord->getSections();
+        $section = reset($sections);
+
+        $this->pageParams = new PageParams($section->getStyle());
 
         $content .= '<body>' . PHP_EOL;
-        $sections = $phpWord->getSections();
+        $content .= '<div class="wrapper" style="width: '. $this->pageParams->getWidth() .'px; '
+                 . ' margin-left: auto; margin-right: auto;">' . PHP_EOL;
+
         foreach ($sections as $section) {
-            $writer = new Container($this->getParentWriter(), $section);
-            $content .= $writer->write();
+            $elementsPages = [];
+            $page = 0;
+            foreach ($section->getElements() as $element) {
+                $elementsPages[$page][] = $element;
+                if ($element instanceof PageBreak) {
+                    $page++;
+                }
+            }
+
+            foreach ($elementsPages as $pageNumber => $elements) {
+                $pageSection = clone $section;
+                $pageSection->setElements($elements);
+                $writer = new Page($this->getParentWriter(), $pageSection);
+                $writer->setPageNumber($pageNumber);
+                $content .= $writer->write();
+            }
+
         }
 
-        $content .= $this->writeNotes();
-        $content .= '</body>' . PHP_EOL;
+        $content .= '</div></body>' . PHP_EOL;
 
         return $content;
     }
 
     /**
-     * Write footnote/endnote contents as textruns
-     *
-     * @return string
+     * @return PageParams
      */
-    private function writeNotes()
+    public function getPageParams(): PageParams
     {
-        /** @var \PhpOffice\PhpWord\Writer\HTML $parentWriter Type hint */
-        $parentWriter = $this->getParentWriter();
-        $phpWord = $parentWriter->getPhpWord();
-        $notes = $parentWriter->getNotes();
-
-        $content = '';
-
-        if (!empty($notes)) {
-            $content .= '<hr />' . PHP_EOL;
-            foreach ($notes as $noteId => $noteMark) {
-                list($noteType, $noteTypeId) = explode('-', $noteMark);
-                $method = 'get' . ($noteType == 'endnote' ? 'Endnotes' : 'Footnotes');
-                $collection = $phpWord->$method()->getItems();
-
-                if (isset($collection[$noteTypeId])) {
-                    $element = $collection[$noteTypeId];
-                    $noteAnchor = "<a name=\"note-{$noteId}\" />";
-                    $noteAnchor .= "<a href=\"#{$noteMark}\" class=\"NoteRef\"><sup>{$noteId}</sup></a>";
-
-                    $writer = new TextRunWriter($this->getParentWriter(), $element);
-                    $writer->setOpeningText($noteAnchor);
-                    $content .= $writer->write();
-                }
-            }
-        }
-
-        return $content;
+        return $this->pageParams;
     }
 }

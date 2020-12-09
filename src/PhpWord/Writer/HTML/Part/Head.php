@@ -106,6 +106,14 @@ class Head extends AbstractPart
             'td' => array(
                 'border' => '1px solid black',
             ),
+            'p' => array(
+                //'margin-bottom' => '8pt',
+            ),
+            'div.page' => array(
+                'margin-bottom' => '15px',
+                'background-color' => 'white',
+                'word-wrap' => 'break-word',
+            )
         );
         foreach ($defaultStyles as $selector => $style) {
             $styleWriter = new GenericStyleWriter($style);

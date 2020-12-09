@@ -33,6 +33,8 @@ class Container extends AbstractElement
      */
     protected $namespace = 'PhpOffice\\PhpWord\\Writer\\HTML\\Element';
 
+    public $lastDepth;
+
     /**
      * Write container
      *
@@ -45,44 +47,23 @@ class Container extends AbstractElement
             return '';
         }
         $containerClass = substr(get_class($container), strrpos(get_class($container), '\\') + 1);
-        $withoutP = in_array($containerClass, array('TextRun', 'Footnote', 'Endnote')) ? true : false;
+        $withoutP = in_array($containerClass, array('TextRun', 'Footnote', 'Endnote', 'Header', 'Footer')) ? true : false;
         $content = '';
 
         $elements = $container->getElements();
         foreach ($elements as $element) {
             $elementClass = get_class($element);
-            if ($elementClass == "PhpOffice\PhpWord\Element\ListItem") {
-				if (!$wasListItem) {
-					$nestedCount++;
-					// open first ul
-					$content .= '<ul>';
-					$lastDepth = $element->getDepth();
-				}
-				if ($element->getDepth() > $lastDepth) {
-					$nestedCount++;
-					// open nested ul
-					$lastDepth = $element->getDepth();
-					$content .= '<ul>';
-				} else if ($element->getDepth() < $lastDepth) {
-					// close nested ul
-					$nestedCount--;
-					$lastDepth = $element->getDepth();
-					$content .= '</ul>';
-				}
-				$wasListItem = true;
-            } else if ($elementClass != "PhpOffice\PhpWord\Element\ListItem" && $wasListItem) {
-				// Previous list item was last, close all uls
-				for ($i = 0; $i < $nestedCount; $i++) {
-					$content .= '</ul>';
-				}
-				$wasListItem = false;
-			}
-            
             $writerClass = str_replace('PhpOffice\\PhpWord\\Element', $this->namespace, $elementClass);
             if (class_exists($writerClass)) {
                 /** @var \PhpOffice\PhpWord\Writer\HTML\Element\AbstractElement $writer Type hint */
                 $writer = new $writerClass($this->parentWriter, $element, $withoutP);
+                if ($writer instanceof ListItemRun) {
+                    $writer->lastDepth = $this->lastDepth;
+                }
                 $content .= $writer->write();
+                if ($writer instanceof ListItemRun) {
+                    $this->lastDepth = (int)$writer->element->getDepth();
+                }
             }
         }
 

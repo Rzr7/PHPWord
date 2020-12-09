@@ -18,6 +18,7 @@
 namespace PhpOffice\PhpWord\Writer\HTML\Element;
 
 use PhpOffice\PhpWord\Element\Image as ImageElement;
+use PhpOffice\PhpWord\Shared\Converter;
 use PhpOffice\PhpWord\Writer\HTML\Style\Image as ImageStyleWriter;
 
 /**
@@ -27,6 +28,7 @@ use PhpOffice\PhpWord\Writer\HTML\Style\Image as ImageStyleWriter;
  */
 class Image extends Text
 {
+
     /**
      * Write image
      *
@@ -37,18 +39,58 @@ class Image extends Text
         if (!$this->element instanceof ImageElement) {
             return '';
         }
-        $content = '';
-        $imageData = $this->element->getImageStringData(true);
-        if ($imageData !== null) {
-            $styleWriter = new ImageStyleWriter($this->element->getStyle());
-            $style = $styleWriter->write();
-            $imageData = 'data:' . $this->element->getImageType() . ';base64,' . $imageData;
 
-            $content .= $this->writeOpening();
-            $content .= "<img border=\"0\" style=\"{$style}\" src=\"{$imageData}\"/>";
-            $content .= $this->writeClosing();
+        $content = '';
+        $imageData = $this->getImageData();
+        if ($imageData !== null) {
+            $imageStyle = $this->element->getStyle();
+            $styleWriter = new ImageStyleWriter($imageStyle);
+            $styleWriter->setParentWriter($this->parentWriter);
+            $imageData = 'data:' . $this->element->getImageType() . ';base64,' . $imageData;
+            if (!$imageStyle->getNoWrapMode() || !$imageStyle->getBehindDoc()) {
+                $style = $styleWriter->write();
+                $this->expectedHeight = $styleWriter->getExpectedHeight();
+                $this->expectedWidth = $styleWriter->getExpectedWidth();
+
+                $content .= $this->writeOpening();
+                $content .= "<img data-expected-height=\"{$this->expectedHeight}px\" "
+                    ."data-expected-width=\"{$this->expectedWidth}px\" border=\"0\" style=\"{$style}\" src=\"{$imageData}\"/>";
+                $content .= $this->writeClosing();
+            } else {
+                $imageData = str_replace(array("\r","\n"), '', $imageData);
+
+                $left = Converter::emuToPixel($imageStyle->getLeft())?:0;
+                if (!$left && $imageStyle->getPosHorizontal() === 'right') {
+                    $left = 'right';
+                } else {
+                    $left = "{$left}px";
+                }
+
+                $top = Converter::emuToPixel($imageStyle->getTop()) ?: 0;
+                if (!$top && $imageStyle->getPosHorizontal() === 'bottom') {
+                    $top = 'bottom';
+                } else {
+                    $top= "{$top}px";
+                }
+
+                $width = Converter::emuToPixel($imageStyle->getWidth());
+                $height = Converter::emuToPixel($imageStyle->getHeight());
+                $backgroundStyle = [
+                    'background' => "url($imageData)",
+                    'background-repeat' => 'no-repeat',
+                    'background-size'  => "{$width}px {$height}px",
+                    'background-position' => "{$left} {$top}"
+                ];
+
+                $this->parentWriter->backgroundStyles[] = $backgroundStyle;
+            }
         }
 
         return $content;
+    }
+
+    private function getImageData()
+    {
+        return $this->element->getImageStringData(true);
     }
 }

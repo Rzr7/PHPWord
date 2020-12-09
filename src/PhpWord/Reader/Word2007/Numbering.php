@@ -80,6 +80,13 @@ class Numbering extends AbstractPart
             }
         }
 
+        foreach ($abstracts as $abstractId => $abstract) {
+            if (!isset($numberings[$abstractId])) {
+                $numberings[$abstractId] = $abstract;
+                $numberings[$abstractId]['numId'] = $abstractId;
+            }
+        }
+
         // Push to Style collection
         foreach ($numberings as $numId => $numbering) {
             $phpWord->addNumberingStyle("PHPWordList{$numId}", $numbering);

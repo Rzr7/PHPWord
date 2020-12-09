@@ -80,7 +80,14 @@ class Font extends AbstractStyle
      *
      * @var array
      */
-    protected $aliases = array('line-height' => 'lineHeight', 'letter-spacing' => 'spacing');
+    protected $aliases
+        = [
+            'line-height'    => 'lineHeight',
+            'letter-spacing' => 'spacing',
+            'shadowFill' => 'ShadowFill',
+            'shadowVal' => 'ShadowVal',
+            'shadowColor' => 'ShadowColor',
+        ];
 
     /**
      * Font style type
@@ -122,14 +129,14 @@ class Font extends AbstractStyle
      *
      * @var bool
      */
-    private $bold;
+    private $bold = false;
 
     /**
      * Italic
      *
      * @var bool
      */
-    private $italic;
+    private $italic = false;
 
     /**
      * Undeline
@@ -157,14 +164,14 @@ class Font extends AbstractStyle
      *
      * @var bool
      */
-    private $strikethrough;
+    private $strikethrough = false;
 
     /**
      * Double strikethrough
      *
      * @var bool
      */
-    private $doubleStrikethrough;
+    private $doubleStrikethrough = false;
 
     /**
      * Small caps
@@ -172,7 +179,7 @@ class Font extends AbstractStyle
      * @var bool
      * @see  http://www.schemacentral.com/sc/ooxml/e-w_smallCaps-1.html
      */
-    private $smallCaps;
+    private $smallCaps = false;
 
     /**
      * All caps
@@ -180,7 +187,7 @@ class Font extends AbstractStyle
      * @var bool
      * @see  http://www.schemacentral.com/sc/ooxml/e-w_caps-1.html
      */
-    private $allCaps;
+    private $allCaps = false;
 
     /**
      * Foreground/highlight
@@ -235,7 +242,7 @@ class Font extends AbstractStyle
      *
      * @var bool
      */
-    private $rtl;
+    private $rtl = false;
 
     /**
      * noProof (disables AutoCorrect)
@@ -243,7 +250,7 @@ class Font extends AbstractStyle
      * @var bool
      * http://www.datypic.com/sc/ooxml/e-w_noProof-1.html
      */
-    private $noProof;
+    private $noProof = false;
 
     /**
      * Languages
@@ -253,20 +260,73 @@ class Font extends AbstractStyle
     private $lang;
 
     /**
-     * Hidden text
-     *
-     * @var bool
-     * @see  http://www.datypic.com/sc/ooxml/e-w_vanish-1.html
-     */
-    private $hidden;
-
-    /**
      * Vertically Raised or Lowered Text
      *
      * @var int Signed Half-Point Measurement
      * @see http://www.datypic.com/sc/ooxml/e-w_position-1.html
      */
     private $position;
+
+    private $shadowFill;
+    private $shadowVal;
+    private $shadowColor;
+
+    /**
+     * @return mixed
+     */
+    public function getShadowFill()
+    {
+        return $this->shadowFill;
+    }
+
+    /**
+     * @param mixed $shadowFill
+     *
+     * @return Font
+     */
+    public function setShadowFill($shadowFill)
+    {
+        $this->shadowFill = $shadowFill;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getShadowVal()
+    {
+        return $this->shadowVal;
+    }
+
+    /**
+     * @param mixed $shadowVal
+     *
+     * @return Font
+     */
+    public function setShadowVal($shadowVal)
+    {
+        $this->shadowVal = $shadowVal;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getShadowColor()
+    {
+        return $this->shadowColor;
+    }
+
+    /**
+     * @param mixed $shadowColor
+     *
+     * @return Font
+     */
+    public function setShadowColor($shadowColor)
+    {
+        $this->shadowColor = $shadowColor;
+        return $this;
+    }
 
     /**
      * Create new font style
@@ -307,7 +367,6 @@ class Font extends AbstractStyle
                 'smallCaps' => $this->isSmallCaps(),
                 'allCaps'   => $this->isAllCaps(),
                 'fgColor'   => $this->getFgColor(),
-                'hidden'    => $this->isHidden(),
             ),
             'spacing'       => array(
                 'scale'     => $this->getScale(),
@@ -319,6 +378,11 @@ class Font extends AbstractStyle
             'rtl'           => $this->isRTL(),
             'shading'       => $this->getShading(),
             'lang'          => $this->getLang(),
+            'shadow'        => [
+                'fill' => $this->getShadowFill(),
+                'val' => $this->getShadowVal(),
+                'color' => $this->getShadowColor(),
+            ]
         );
 
         return $styles;
@@ -945,29 +1009,6 @@ class Font extends AbstractStyle
     public function getParagraphStyle()
     {
         return $this->getParagraph();
-    }
-
-    /**
-     * Get hidden text
-     *
-     * @return bool
-     */
-    public function isHidden()
-    {
-        return $this->hidden;
-    }
-
-    /**
-     * Set hidden text
-     *
-     * @param bool $value
-     * @return self
-     */
-    public function setHidden($value = true)
-    {
-        $this->hidden = $this->setBoolVal($value, $this->hidden);
-
-        return $this;
     }
 
     /**

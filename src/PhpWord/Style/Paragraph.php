@@ -54,14 +54,23 @@ class Paragraph extends Border
     /**
      * @const int One line height equals 240 twip
      */
-    const LINE_HEIGHT = 240;
+    public const LINE_HEIGHT = 240;
 
     /**
      * Aliases
      *
      * @var array
      */
-    protected $aliases = array('line-height' => 'lineHeight', 'line-spacing' => 'spacing');
+    protected $aliases
+        = [
+            'line-height'  => 'lineHeight',
+            'line-spacing' => 'spacing',
+            'lineRule'     => 'LineRule',
+            'firstLine'    => 'FirstLine',
+            'shadowFill'   => 'ShadowFill',
+            'shadowColor'  => 'ShadowColor',
+            'shadowVal'    => 'ShadowVal',
+        ];
 
     /**
      * Parent style
@@ -102,6 +111,13 @@ class Paragraph extends Border
      * @var int
      */
     private $lineHeight;
+
+    /**
+     * Text line rule
+     *
+     * @var string
+     */
+    private $lineRule;
 
     /**
      * Allow first/last line to display on a separate page
@@ -187,6 +203,109 @@ class Paragraph extends Border
      */
     private $suppressAutoHyphens = false;
 
+    private $firstLine = 0;
+
+    private $shadowVal;
+
+    private $shadowColor;
+
+    private $shadowFill;
+
+    /**
+     * @return string
+     */
+    public function getLineRule(): ?string
+    {
+        return $this->lineRule ?: \PhpOffice\PhpWord\SimpleType\LineSpacingRule::AUTO;
+    }
+
+    /**
+     * @param string $lineRule
+     *
+     * @return Paragraph
+     */
+    public function setLineRule(string $lineRule): Paragraph
+    {
+        $this->lineRule = $lineRule;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getShadowVal()
+    {
+        return $this->shadowVal;
+    }
+
+    /**
+     * @param mixed $shadowVal
+     *
+     * @return Paragraph
+     */
+    public function setShadowVal($shadowVal)
+    {
+        $this->shadowVal = $shadowVal;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getShadowColor()
+    {
+        return $this->shadowColor;
+    }
+
+    /**
+     * @param mixed $shadowColor
+     *
+     * @return Paragraph
+     */
+    public function setShadowColor($shadowColor)
+    {
+        $this->shadowColor = $shadowColor;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getShadowFill()
+    {
+        return $this->shadowFill;
+    }
+
+    /**
+     * @param mixed $shadowFill
+     *
+     * @return Paragraph
+     */
+    public function setShadowFill($shadowFill)
+    {
+        $this->shadowFill = $shadowFill;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getFirstLine(): int
+    {
+        return $this->firstLine;
+    }
+
+    /**
+     * @param int $firstLine
+     *
+     * @return Paragraph
+     */
+    public function setFirstLine($firstLine)
+    {
+        $this->firstLine = (int) $firstLine;
+        return $this;
+    }
+
     /**
      * Set Style value
      *
@@ -198,7 +317,7 @@ class Paragraph extends Border
     {
         $key = Text::removeUnderscorePrefix($key);
         if ('indent' == $key || 'hanging' == $key) {
-            $value = $value * 720;  // 720 twips is 0.5 inch
+            $value = $value * 720;
         }
 
         return parent::setStyleValue($key, $value);
@@ -239,6 +358,7 @@ class Paragraph extends Border
             'bidi'                => $this->isBidi(),
             'textAlignment'       => $this->getTextAlignment(),
             'suppressAutoHyphens' => $this->hasSuppressAutoHyphens(),
+            'lineRule'            => $this->getLineRule(),
         );
 
         return $styles;
@@ -546,7 +666,7 @@ class Paragraph extends Border
 
         $this->lineHeight = $lineHeight;
         $this->setSpacing(($lineHeight - 1) * self::LINE_HEIGHT);
-        $this->setSpacingLineRule(\PhpOffice\PhpWord\SimpleType\LineSpacingRule::AUTO);
+        //$this->setSpacingLineRule(\PhpOffice\PhpWord\SimpleType\LineSpacingRule::AUTO);
 
         return $this;
     }
@@ -870,5 +990,49 @@ class Paragraph extends Border
     public function setSuppressAutoHyphens($suppressAutoHyphens)
     {
         $this->suppressAutoHyphens = (bool) $suppressAutoHyphens;
+    }
+
+    /**
+     * Merge paragraph style
+     *
+     * @param Paragraph $style
+     */
+    public function mergeStyle(Paragraph $style): void
+    {
+        $thisStyleValues = $this->getStyleValues();
+        $otherStyleValues = $style->getStyleValues();
+
+        foreach ($otherStyleValues as $otherStyleName => $otherStyleValue) {
+            if (empty($thisStyleValues[$otherStyleName]) && !empty($otherStyleValue)) {
+                $this->setStyleValue($otherStyleName, $otherStyleValue);
+            }
+        }
+    }
+
+    /**
+     * Merge paragraph style
+     *
+     * @param array $styles
+     */
+    public function mergeArray(array $styles = null): void
+    {
+        if ($styles === null) {
+            return;
+        }
+
+        $thisStyleValues = $this->getStyleValues();
+
+        foreach ($styles as $otherStyleName => $otherStyleValue) {
+            if (empty($thisStyleValues[$otherStyleName])) {
+                $this->setStyleValue($otherStyleName, $otherStyleValue);
+            }
+        }
+    }
+
+    public function getNewInstance()
+    {
+        $newInstance = new Paragraph();
+        $newInstance->mergeStyle($this);
+        return $newInstance;
     }
 }

@@ -34,7 +34,7 @@ class Document extends AbstractPart
      *
      * @var \PhpOffice\PhpWord\PhpWord
      */
-    private $phpWord;
+    protected  $phpWord;
 
     /**
      * Read document.xml.
@@ -45,6 +45,7 @@ class Document extends AbstractPart
     {
         $this->phpWord = $phpWord;
         $xmlReader = new XMLReader();
+        $this->xmlFile = trim($this->xmlFile, '/');
         $xmlReader->getDomFromZip($this->docFile, $this->xmlFile);
         $readMethods = array('w:p' => 'readWPNode', 'w:tbl' => 'readTable', 'w:sectPr' => 'readWSectPrNode');
 
@@ -106,7 +107,6 @@ class Document extends AbstractPart
     {
         $styleDefs = array(
             'breakType'     => array(self::READ_VALUE, 'w:type'),
-            'vAlign'        => array(self::READ_VALUE, 'w:vAlign'),
             'pageSizeW'     => array(self::READ_VALUE, 'w:pgSz', 'w:w'),
             'pageSizeH'     => array(self::READ_VALUE, 'w:pgSz', 'w:h'),
             'orientation'   => array(self::READ_VALUE, 'w:pgSz', 'w:orient'),
@@ -150,12 +150,21 @@ class Document extends AbstractPart
     private function readWPNode(XMLReader $xmlReader, \DOMElement $node, Section &$section)
     {
         // Page break
-        if ($xmlReader->getAttribute('w:type', $node, 'w:r/w:br') == 'page') {
+        $beforePageBreak = false;
+        if ($xmlReader->getAttribute('w:type', $node, 'w:r/w:br') == 'page'
+        && $xmlReader->elementExists('w:r/w:lastRenderedPageBreak', $node)) {
             $section->addPageBreak(); // PageBreak
+            $beforePageBreak = true;
         }
+
 
         // Paragraph
         $this->readParagraph($xmlReader, $node, $section);
+
+        // Page break
+        if ($xmlReader->getAttribute('w:type', $node, 'w:r/w:br') == 'page' && !$beforePageBreak) {
+            $section->addPageBreak(); // PageBreak
+        }
 
         // Section properties
         if ($xmlReader->elementExists('w:pPr/w:sectPr', $node)) {

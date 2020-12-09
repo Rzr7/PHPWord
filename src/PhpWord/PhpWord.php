@@ -88,6 +88,13 @@ class PhpWord
     private $metadata = array();
 
     /**
+     * Default paragraph style
+     *
+     * @var \PhpOffice\PhpWord\Style\Paragraph
+     */
+    private $defaultParagraphStyle;
+
+    /**
      * Create new instance
      *
      * Collections are created dynamically
@@ -314,7 +321,19 @@ class PhpWord
      */
     public function setDefaultParagraphStyle($styles)
     {
-        return Style::setDefaultParagraphStyle($styles);
+        $this->defaultParagraphStyle = Style::setDefaultParagraphStyle($styles);
+        return $this->defaultParagraphStyle;
+    }
+
+
+    /**
+     * get default paragraph style definition to styles.xml
+     *
+     * @return \PhpOffice\PhpWord\Style\Paragraph
+     */
+    public function getDefaultParagraphStyle()
+    {
+        return $this->defaultParagraphStyle;
     }
 
     /**

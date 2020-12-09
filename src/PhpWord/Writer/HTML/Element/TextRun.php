@@ -31,13 +31,41 @@ class TextRun extends Text
      */
     public function write()
     {
-        $content = '';
+        $content = [];
 
-        $content .= $this->writeOpening();
+        $content['opening'] = $this->getOpening();
+        $content['openingText'] = $this->openingText;
         $writer = new Container($this->parentWriter, $this->element);
-        $content .= $writer->write();
-        $content .= $this->writeClosing();
+        $content['content'] = $writer->write();
 
-        return $content;
+        $content['closingText'] = $this->closingText;
+        $content['closing'] = $this->writeClosing();
+
+        if (!empty($writer->parentWriter->backgroundStyles) && !empty($content['opening']['tag'])) {
+            $background = $this->parentWriter->getBackgroundStyles($this->element->getElementId());
+            $content['styles'] = $background['style'];
+
+            $set = false;
+            if (!empty($content['opening']['style'])) {
+                foreach ($content['opening']['style'] as &$style) {
+                    if ($style['attribute'] === 'class') {
+                        $style['style'] .= ' ' . $background['className'];
+                        $set = true;
+                        break;
+                    }
+                }
+            }
+
+            if ($set === false) {
+                $content['opening']['style'][] = [
+                    'attribute' => 'class',
+                    'style'     => $background['className']
+                ];
+            }
+            $writer->parentWriter->backgroundStyles = [];
+        }
+
+        $content['opening'] = $this->writeOpening($content['opening']);
+        return implode('', $content);
     }
 }

@@ -43,7 +43,12 @@ class Table extends AbstractElement
      *
      * @var int
      */
-    private $width = null;
+    private $width;
+
+    /**
+     * @var array
+     */
+    public $columnWidths = [];
 
     /**
      * Create a new table

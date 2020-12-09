@@ -29,6 +29,7 @@ class Converter
     const INCH_TO_PICA = 6;
     const PIXEL_TO_EMU = 9525;
     const DEGREE_TO_ANGLE = 60000;
+    const PIXEL_IN_POINT = 1.3333333333;
 
     /**
      * Convert centimeter to twip
@@ -133,7 +134,7 @@ class Converter
      * Convert inch to EMU
      *
      * @param float $inch
-     * @return int
+     * @return float
      */
     public static function inchToEmu($inch = 1)
     {
@@ -143,7 +144,7 @@ class Converter
     /**
      * Convert pixel to twip
      *
-     * @param float $pixel
+     * @param int $pixel
      * @return float
      */
     public static function pixelToTwip($pixel = 1)
@@ -154,7 +155,7 @@ class Converter
     /**
      * Convert pixel to centimeter
      *
-     * @param float $pixel
+     * @param int $pixel
      * @return float
      */
     public static function pixelToCm($pixel = 1)
@@ -165,7 +166,7 @@ class Converter
     /**
      * Convert pixel to point
      *
-     * @param float $pixel
+     * @param int $pixel
      * @return float
      */
     public static function pixelToPoint($pixel = 1)
@@ -176,7 +177,7 @@ class Converter
     /**
      * Convert pixel to EMU
      *
-     * @param float $pixel
+     * @param int $pixel
      * @return int
      */
     public static function pixelToEmu($pixel = 1)
@@ -187,7 +188,7 @@ class Converter
     /**
      * Convert point to twip unit
      *
-     * @param float $point
+     * @param int $point
      * @return float
      */
     public static function pointToTwip($point = 1)
@@ -198,7 +199,7 @@ class Converter
     /**
      * Convert point to pixel
      *
-     * @param float $point
+     * @param int $point
      * @return float
      */
     public static function pointToPixel($point = 1)
@@ -209,7 +210,7 @@ class Converter
     /**
      * Convert point to EMU
      *
-     * @param float $point
+     * @param int $point
      * @return float
      */
     public static function pointToEmu($point = 1)
@@ -218,20 +219,9 @@ class Converter
     }
 
     /**
-     * Convert point to cm
-     *
-     * @param float $point
-     * @return float
-     */
-    public static function pointToCm($point = 1)
-    {
-        return $point / self::INCH_TO_POINT * self::INCH_TO_CM;
-    }
-
-    /**
      * Convert EMU to pixel
      *
-     * @param float $emu
+     * @param int $emu
      * @return float
      */
     public static function emuToPixel($emu = 1)
@@ -242,7 +232,7 @@ class Converter
     /**
      * Convert pica to point
      *
-     * @param float $pica
+     * @param int $pica
      * @return float
      */
     public static function picaToPoint($pica = 1)
@@ -253,7 +243,7 @@ class Converter
     /**
      * Convert degree to angle
      *
-     * @param float $degree
+     * @param int $degree
      * @return int
      */
     public static function degreeToAngle($degree = 1)
@@ -264,56 +254,12 @@ class Converter
     /**
      * Convert angle to degrees
      *
-     * @param float $angle
+     * @param int $angle
      * @return int
      */
     public static function angleToDegree($angle = 1)
     {
         return round($angle / self::DEGREE_TO_ANGLE);
-    }
-
-    /**
-     * Convert colorname as string to RGB
-     *
-     * @param string $value color name
-     * @return string color as hex RGB string, or original value if unknown
-     */
-    public static function stringToRgb($value)
-    {
-        switch ($value) {
-            case \PhpOffice\PhpWord\Style\Font::FGCOLOR_YELLOW:
-                return 'FFFF00';
-            case \PhpOffice\PhpWord\Style\Font::FGCOLOR_LIGHTGREEN:
-                return '90EE90';
-            case \PhpOffice\PhpWord\Style\Font::FGCOLOR_CYAN:
-                return '00FFFF';
-            case \PhpOffice\PhpWord\Style\Font::FGCOLOR_MAGENTA:
-                return 'FF00FF';
-            case \PhpOffice\PhpWord\Style\Font::FGCOLOR_BLUE:
-                return '0000FF';
-            case \PhpOffice\PhpWord\Style\Font::FGCOLOR_RED:
-                return 'FF0000';
-            case \PhpOffice\PhpWord\Style\Font::FGCOLOR_DARKBLUE:
-                return '00008B';
-            case \PhpOffice\PhpWord\Style\Font::FGCOLOR_DARKCYAN:
-                return '008B8B';
-            case \PhpOffice\PhpWord\Style\Font::FGCOLOR_DARKGREEN:
-                return '006400';
-            case \PhpOffice\PhpWord\Style\Font::FGCOLOR_DARKMAGENTA:
-                return '8B008B';
-            case \PhpOffice\PhpWord\Style\Font::FGCOLOR_DARKRED:
-                return '8B0000';
-            case \PhpOffice\PhpWord\Style\Font::FGCOLOR_DARKYELLOW:
-                return '8B8B00';
-            case \PhpOffice\PhpWord\Style\Font::FGCOLOR_DARKGRAY:
-                return 'A9A9A9';
-            case \PhpOffice\PhpWord\Style\Font::FGCOLOR_LIGHTGRAY:
-                return 'D3D3D3';
-            case \PhpOffice\PhpWord\Style\Font::FGCOLOR_BLACK:
-                return '000000';
-        }
-
-        return $value;
     }
 
     /**
@@ -326,8 +272,6 @@ class Converter
     {
         if ($value[0] == '#') {
             $value = substr($value, 1);
-        } else {
-            $value = self::stringToRgb($value);
         }
 
         if (strlen($value) == 6) {
@@ -356,7 +300,6 @@ class Converter
         if ($value == '0') {
             return 0;
         }
-        $matches = array();
         if (preg_match('/^[+-]?([0-9]+\.?[0-9]*)?(px|em|ex|%|in|cm|mm|pt|pc)$/i', $value, $matches)) {
             $size = $matches[1];
             $unit = $matches[2];
@@ -391,36 +334,8 @@ class Converter
         return self::pointToTwip(self::cssToPoint($value));
     }
 
-    /**
-     * Transforms a size in CSS format (eg. 10px, 10px, ...) to pixel
-     *
-     * @param string $value
-     * @return float
-     */
-    public static function cssToPixel($value)
+    public static function twipToPixel($value)
     {
-        return self::pointToPixel(self::cssToPoint($value));
-    }
-
-    /**
-     * Transforms a size in CSS format (eg. 10px, 10px, ...) to cm
-     *
-     * @param string $value
-     * @return float
-     */
-    public static function cssToCm($value)
-    {
-        return self::pointToCm(self::cssToPoint($value));
-    }
-
-    /**
-     * Transforms a size in CSS format (eg. 10px, 10px, ...) to emu
-     *
-     * @param string $value
-     * @return float
-     */
-    public static function cssToEmu($value)
-    {
-        return self::pointToEmu(self::cssToPoint($value));
+        return ceil($value / 20 * self::PIXEL_IN_POINT);
     }
 }

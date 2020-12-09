@@ -17,6 +17,10 @@
 
 namespace PhpOffice\PhpWord\Writer\HTML\Style;
 
+use PhpOffice\PhpWord\Shared\Converter;
+use \PhpOffice\PhpWord\Style\Image as ImageStyle;
+use PhpOffice\PhpWord\Writer\HTML\PageParams;
+
 /**
  * Paragraph style HTML writer
  *
@@ -24,6 +28,11 @@ namespace PhpOffice\PhpWord\Writer\HTML\Style;
  */
 class Image extends AbstractStyle
 {
+    protected $expectedHeight = 0;
+    protected $expectedWidth = 0;
+
+    protected $align = ImageStyle::POS_LEFT;
+
     /**
      * Write style
      *
@@ -37,11 +46,86 @@ class Image extends AbstractStyle
         }
         $css = array();
 
-        $width = $style->getWidth();
-        $height = $style->getHeight();
-        $css['width'] = $this->getValueIf(is_numeric($width), $width . 'px');
-        $css['height'] = $this->getValueIf(is_numeric($height), $height . 'px');
+        $width = Converter::emuToPixel($style->getWidth());
+        $height = Converter::emuToPixel($style->getHeight());
+        //$css['position'] = $this->getValueIf($style->getNoWrapMode(), 'absolute');
+        $css['width'] = $width . 'px';
+        $css['height'] =  $height . 'px';
 
+        if (!$style->getNoWrapMode()) {
+            $this->expectedHeight = $height;
+            $this->expectedWidth = $width;
+        }
+
+        if (!$style->getInline()) {
+            $align = $this->getAlign($style);
+            if ($align == ImageStyle::POS_CENTER) {
+                $css['display'] = 'block';
+                $css['margin-left'] = 'auto';
+                $css['margin-right'] = 'auto';
+            } else {
+                $css['float'] = $align;
+            }
+
+            if (!$style->getNoWrapMode() && ($align == ImageStyle::POS_CENTER || $align == ImageStyle::POS_RIGHT)) {
+                $this->expectedWidth = $this
+                    ->getParentWriter()
+                    ->getWriterPart('body')
+                    ->getPageParams()
+                    ->getContentWidth();
+            }
+        }
+
+        $css = $this->applyBorder($style, $css);
         return $this->assembleCss($css);
+    }
+
+    protected function getAlign(ImageStyle $style)
+    {
+        if (!empty($style->getHPos())) {
+            return $style->getHPos();
+        }
+
+        /**
+         * @var PageParams $pageParams
+         */
+        $pageParams = $this->getParentWriter()->getWriterPart('body')->getPageParams();
+
+        $left = Converter::emuToPixel($style->getLeft());
+        $width = Converter::emuToPixel($style->getWidth());
+
+        if ($left + $width > ($pageParams->getContentWidth() - 30)) {
+            return  ImageStyle::POS_RIGHT;
+        } elseif ($left < 30) {
+            return  ImageStyle::POS_LEFT;
+        }
+
+        return ImageStyle::POS_CENTER;
+    }
+
+    protected function applyBorder(ImageStyle $style, $css)
+    {
+        if ($width = $style->getBorderWidth() > 0) {
+            $color = $style->getBorderColor() ? '#' . $style->getBorderColor() : 'black';
+            $width = ceil(Converter::twipToPixel($width));
+            $css['border'] = $width . 'px solid ' . $color;
+
+            if (!$style->getNoWrapMode()) {
+                $this->expectedHeight += $style->getBorderWidth() * 2;
+                $this->expectedWidth += $style->getBorderWidth() * 2;
+            }
+        }
+
+        return $css;
+    }
+
+    public function getExpectedHeight()
+    {
+        return $this->expectedHeight;
+    }
+
+    public function getExpectedWidth()
+    {
+        return $this->expectedWidth;
     }
 }

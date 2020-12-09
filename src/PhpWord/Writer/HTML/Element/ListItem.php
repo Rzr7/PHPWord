@@ -38,9 +38,9 @@ class ListItem extends AbstractElement
         }
 
         if (Settings::isOutputEscapingEnabled()) {
-            $content = '<li>' . $this->escaper->escapeHtml($this->element->getTextObject()->getText()) . '</li>' . PHP_EOL;
+            $content = '<p>' . $this->escaper->escapeHtml($this->element->getTextObject()->getText()) . '</p>' . PHP_EOL;
         } else {
-            $content = '<li>' . $this->element->getTextObject()->getText() . '</li>' . PHP_EOL;
+            $content = '<p>' . $this->element->getTextObject()->getText() . '</p>' . PHP_EOL;
         }
 
         return $content;

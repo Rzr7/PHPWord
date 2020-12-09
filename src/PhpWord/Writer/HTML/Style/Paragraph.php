@@ -17,6 +17,7 @@
 
 namespace PhpOffice\PhpWord\Writer\HTML\Style;
 
+use PhpOffice\PhpWord\Shared\Converter;
 use PhpOffice\PhpWord\SimpleType\Jc;
 
 /**
@@ -73,11 +74,35 @@ class Paragraph extends AbstractStyle
         if (!is_null($spacing)) {
             $before = $spacing->getBefore();
             $after = $spacing->getAfter();
-            $css['margin-top'] = $this->getValueIf(!is_null($before), ($before / 20) . 'pt');
+            $css['margin-top'] = $this->getValueIf(!is_null($before), ($before / 20) . 'pt') ?: '0';
             $css['margin-bottom'] = $this->getValueIf(!is_null($after), ($after / 20) . 'pt');
         } else {
             $css['margin-top'] = '0';
             $css['margin-bottom'] = '0';
+        }
+
+        if (!empty($style->getFirstLine())) {
+            $css['text-indent'] = ($style->getFirstLine() / 20) . 'pt';
+        }
+
+        $indentation = $style->getIndentation();
+        if ($indentation && !empty($indentation->getLeft())) {
+            $css['margin-left'] = Converter::emuToPixel($indentation->getLeft()) . 'px';
+        }
+
+        if (empty($css['background']) && !empty($style->getShadowFill())) {
+            $css['background-color'] = '#' . $style->getShadowFill();
+        }
+
+        $lineRule = $style->getLineRule();
+        if ($lineRule === \PhpOffice\PhpWord\SimpleType\LineSpacingRule::AUTO) {
+            $lineHeightConverted = Converter::twipToPixel($style->getLineHeight());
+        } else {
+            $lineHeightConverted = Converter::emuToPixel($style->getLineHeight());
+        }
+
+        if (!empty($lineHeightConverted)) {
+            $css['line-height'] =  $lineHeightConverted . 'px';
         }
 
         return $this->assembleCss($css);

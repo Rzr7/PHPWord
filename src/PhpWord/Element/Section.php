@@ -59,16 +59,14 @@ class Section extends AbstractContainer
      * Create new instance
      *
      * @param int $sectionCount
-     * @param null|array|\PhpOffice\PhpWord\Style $style
+     * @param array $style
      */
     public function __construct($sectionCount, $style = null)
     {
         $this->sectionId = $sectionCount;
         $this->setDocPart($this->container, $this->sectionId);
-        if (null === $style) {
-            $style = new SectionStyle();
-        }
-        $this->style = $this->setNewStyle(new SectionStyle(), $style);
+        $this->style = new SectionStyle();
+        $this->setStyle($style);
     }
 
     /**
@@ -146,18 +144,6 @@ class Section extends AbstractContainer
      *
      * @return FootnoteProperties
      */
-    public function getFootnoteProperties()
-    {
-        return $this->footnoteProperties;
-    }
-
-    /**
-     * Get the footnote properties
-     *
-     * @deprecated Use the `getFootnoteProperties` method instead
-     *
-     * @return FootnoteProperties
-     */
     public function getFootnotePropoperties()
     {
         return $this->footnoteProperties;
@@ -216,7 +202,7 @@ class Section extends AbstractContainer
         $collectionArray = $header ? 'headers' : 'footers';
         $collection = &$this->$collectionArray;
 
-        if (in_array($type, array(Header::AUTO, Header::FIRST, Header::EVEN))) {
+        if (in_array($type, [Header::AUTO, Header::FIRST, Header::EVEN])) {
             $index = count($collection);
             /** @var \PhpOffice\PhpWord\Element\AbstractContainer $container Type hint */
             $container = new $containerClass($this->sectionId, ++$index, $type);
@@ -301,5 +287,13 @@ class Section extends AbstractContainer
         }
 
         return $this->footers[1];
+    }
+
+    /**
+     * @param array $elements
+     */
+    public function setElements(array $elements)
+    {
+        $this->elements = $elements;
     }
 }

@@ -86,9 +86,6 @@ class Table extends AbstractStyle
         $styleWriter = new TablePosition($xmlWriter, $style->getPosition());
         $styleWriter->write();
 
-        //Right to left
-        $xmlWriter->writeElementIf($style->isBidiVisual() !== null, 'w:bidiVisual', 'w:val', $this->writeOnOf($style->isBidiVisual()));
-
         $this->writeMargin($xmlWriter, $style);
         $this->writeBorder($xmlWriter, $style);
 

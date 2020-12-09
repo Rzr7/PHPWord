@@ -36,14 +36,14 @@ class Text extends AbstractElement
      *
      * @var string
      */
-    private $openingText = '';
+    protected $openingText = '';
 
     /**
      * Text written before closing
      *
      * @var string
      */
-    private $closingText = '';
+    protected $closingText = '';
 
     /**
      * Opening tags
@@ -77,7 +77,7 @@ class Text extends AbstractElement
         if (Settings::isOutputEscapingEnabled()) {
             $content .= $this->escaper->escapeHtml($element->getText());
         } else {
-            $content .= $element->getText();
+            $content .= str_replace(' ', '&#x2005;', $element->getText());
         }
         $content .= $this->closingTags;
         $content .= $this->closingText;
@@ -111,21 +111,40 @@ class Text extends AbstractElement
      *
      * @return string
      */
-    protected function writeOpening()
+    protected function writeOpening($opening = null)
     {
-        $content = '';
+        $opening = $opening ?: $this->getOpening();
+
+        $style = $this->getParagraphStyle($opening['style'] ?? []);
+        $result = '';
+        if (!empty($opening['tag'])) {
+            $result .= "<{$opening['tag']}{$style}>";
+        }
+
+        $result .= $opening['trackChangeOpening'];
+
+        return $result;
+    }
+
+    protected function getOpening()
+    {
+        $opening = [
+            'tag' => '',
+            'style' => [],
+        ];
         if (!$this->withoutP) {
             $style = '';
             if (method_exists($this->element, 'getParagraphStyle')) {
-                $style = $this->getParagraphStyle();
+                $style = $this->getParagraphStyleArray();
             }
-            $content .= "<p{$style}>";
+            $opening['tag'] = 'p';
+            $opening['style'] = $style;
         }
 
         //open track change tag
-        $content .= $this->writeTrackChangeOpening();
+        $opening['trackChangeOpening'] = $this->writeTrackChangeOpening();
 
-        return $content;
+        return $opening;
     }
 
     /**
@@ -213,13 +232,31 @@ class Text extends AbstractElement
     /**
      * Write paragraph style
      *
+     * @param $style
      * @return string
      */
-    private function getParagraphStyle()
+    private function getParagraphStyle($styles = null)
     {
+        $styles = $styles === null ? $this->getParagraphStyleArray() : $styles;
+        if (empty($styles)) {
+            return '';
+        }
+
+        $inlines = '';
+
+        foreach ($styles as $style) {
+            $inlines .= " {$style['attribute']}=\"{$style['style']}\"";
+        }
+
+        return $inlines;
+    }
+
+    private function getParagraphStyleArray()
+    {
+
         /** @var \PhpOffice\PhpWord\Element\Text $element Type hint */
         $element = $this->element;
-        $style = '';
+        $style = [];
         if (!method_exists($element, 'getParagraphStyle')) {
             return $style;
         }
@@ -228,16 +265,16 @@ class Text extends AbstractElement
         $pStyleIsObject = ($paragraphStyle instanceof Paragraph);
         if ($pStyleIsObject) {
             $styleWriter = new ParagraphStyleWriter($paragraphStyle);
-            $style = $styleWriter->write();
+            $style['style'] = $styleWriter->write();
         } elseif (is_string($paragraphStyle)) {
-            $style = $paragraphStyle;
+            $style['style'] = $paragraphStyle;
         }
-        if ($style) {
+        if (!empty($style)) {
             $attribute = $pStyleIsObject ? 'style' : 'class';
-            $style = " {$attribute}=\"{$style}\"";
+            $style['attribute'] = $attribute;
         }
 
-        return $style;
+        return array_filter([$style]);
     }
 
     /**

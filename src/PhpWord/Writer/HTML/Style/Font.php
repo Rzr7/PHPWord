@@ -45,6 +45,7 @@ class Font extends AbstractStyle
         $fgColor = $style->getFgColor();
         $underline = $style->getUnderline() != FontStyle::UNDERLINE_NONE;
         $lineThrough = $style->isStrikethrough() || $style->isDoubleStrikethrough();
+        $shadowFill = $style->getShadowFill();
 
         $css['font-family'] = $this->getValueIf($font !== null, "'{$font}'");
         $css['font-size'] = $this->getValueIf($size !== null, "{$size}pt");
@@ -60,7 +61,10 @@ class Font extends AbstractStyle
         $css['text-decoration'] .= $this->getValueIf($lineThrough, 'line-through ');
         $css['text-transform'] = $this->getValueIf($style->isAllCaps(), 'uppercase');
         $css['font-variant'] = $this->getValueIf($style->isSmallCaps(), 'small-caps');
-        $css['display'] = $this->getValueIf($style->isHidden(), 'none');
+
+        if (!empty($shadowFill) && empty($css['background'])) {
+            $css['background-color'] = "#$shadowFill";
+        }
 
         $spacing = $style->getSpacing();
         $css['letter-spacing'] = $this->getValueIf(!is_null($spacing), ($spacing / 20) . 'pt');

@@ -34,7 +34,17 @@ class Cell extends AbstractContainer
      *
      * @var int
      */
-    private $width = null;
+    private $width;
+
+    /**
+     * @var int
+     */
+    public $number;
+
+    /**
+     * @var Row
+     */
+    public $row;
 
     /**
      * Cell style

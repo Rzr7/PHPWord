@@ -120,14 +120,14 @@ class Frame extends AbstractStyle
      *
      * @var int|float
      */
-    private $left = 0;
+    protected $left = 0;
 
     /**
      * Topmost (vertical) position
      *
      * @var int|float
      */
-    private $top = 0;
+    protected $top = 0;
 
     /**
      * Position type: absolute|relative

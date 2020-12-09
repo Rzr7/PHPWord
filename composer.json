@@ -45,7 +45,7 @@
             "php-cs-fixer fix --ansi --dry-run --diff",
             "phpcs --report-width=200 --report-summary  --report-full samples/ src/ tests/ --ignore=src/PhpWord/Shared/PCLZip --standard=PSR2 -n",
             "phpmd src/,tests/ text ./phpmd.xml.dist --exclude pclzip.lib.php",
-            "@test-no-coverage"
+            "@test"
         ],
         "fix": [
             "php-cs-fixer fix --ansi"
@@ -58,7 +58,7 @@
         "fix": "Fixes issues found by PHP-CS"
     },
     "require": {
-        "php": "^5.3.3 || ^7.0",
+        "php": "^7.1",
         "ext-xml": "*",
         "zendframework/zend-escaper": "^2.2",
         "phpoffice/common": "^0.2.9"
@@ -85,12 +85,13 @@
     },
     "autoload": {
         "psr-4": {
-            "PhpOffice\\PhpWord\\": "src/PhpWord"
+            "PhpOffice\\PhpWord\\": "src/PhpWord",
+            "Tests\\D1\\": "tests/D1"
         }
     },
     "extra": {
         "branch-alias": {
-            "dev-develop": "0.18-dev"
+            "dev-develop": "0.16-dev"
         }
     }
 }

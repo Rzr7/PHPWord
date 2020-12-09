@@ -31,7 +31,7 @@ namespace PhpOffice\PhpWord\Element;
  * @method Footnote addFootnote(mixed $pStyle = null)
  * @method Endnote addEndnote(mixed $pStyle = null)
  * @method CheckBox addCheckBox(string $name, $text, mixed $fStyle = null, mixed $pStyle = null)
- * @method Title addTitle(mixed $text, int $depth = 1)
+ * @method Title addTitle(string $text, int $depth = 1)
  * @method TOC addTOC(mixed $fontStyle = null, mixed $tocStyle = null, int $minDepth = 1, int $maxDepth = 9)
  * @method PageBreak addPageBreak()
  * @method Table addTable(mixed $style = null)
@@ -41,7 +41,7 @@ namespace PhpOffice\PhpWord\Element;
  * @method Field addField(string $type = null, array $properties = array(), array $options = array(), mixed $text = null)
  * @method Line addLine(mixed $lineStyle = null)
  * @method Shape addShape(string $type, mixed $style = null)
- * @method Chart addChart(string $type, array $categories, array $values, array $style = null, $seriesName = null)
+ * @method Chart addChart(string $type, array $categories, array $values, array $style = null)
  * @method FormField addFormField(string $type, mixed $fStyle = null, mixed $pStyle = null)
  * @method SDT addSDT(string $type)
  *
@@ -254,7 +254,7 @@ abstract class AbstractContainer extends AbstractElement
         // Special condition, e.g. preservetext can only exists in cell when
         // the cell is located in header or footer
         $validSubcontainers = array(
-            'PreserveText'  => array(array('Cell'), array('Header', 'Footer', 'Section')),
+            'PreserveText'  => array(array('Cell'), array('Header', 'Footer')),
             'Footnote'      => array(array('Cell', 'TextRun'), array('Section')),
             'Endnote'       => array(array('Cell', 'TextRun'), array('Section')),
         );
@@ -262,7 +262,7 @@ abstract class AbstractContainer extends AbstractElement
         // Check if a method is valid for current container
         if (isset($validContainers[$method])) {
             if (!in_array($this->container, $validContainers[$method])) {
-                throw new \BadMethodCallException("Cannot add {$method} in {$this->container}.");
+                //throw new \BadMethodCallException("Cannot add {$method} in {$this->container}.");
             }
         }
 
@@ -273,7 +273,7 @@ abstract class AbstractContainer extends AbstractElement
             $allowedDocParts = $rules[1];
             foreach ($containers as $container) {
                 if ($this->container == $container && !in_array($this->getDocPart(), $allowedDocParts)) {
-                    throw new \BadMethodCallException("Cannot add {$method} in {$this->container}.");
+                    //throw new \BadMethodCallException("Cannot add {$method} in {$this->container}.");
                 }
             }
         }
