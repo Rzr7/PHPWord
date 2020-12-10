@@ -165,12 +165,13 @@ class Table extends AbstractElement
 
         foreach ($this->rows as $row) {
             $cells = $row->getCells();
+
             if (count($cells) <= count($cellWidths)) {
                 continue;
             }
             $cellWidths = array();
             foreach ($cells as $cell) {
-                $cellWidths[] = $cell->getWidth();
+                $cellWidths[] = !empty($cell->getWidth()) ? $cell->getWidth() : $cell->getStyle()->getWidth();
             }
         }
 

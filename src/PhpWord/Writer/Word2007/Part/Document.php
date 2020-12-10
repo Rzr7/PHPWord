@@ -44,15 +44,49 @@ class Document extends AbstractPart
 
         $xmlWriter->startDocument('1.0', 'UTF-8', 'yes');
         $xmlWriter->startElement('w:document');
-        $xmlWriter->writeAttribute('xmlns:ve', 'http://schemas.openxmlformats.org/markup-compatibility/2006');
-        $xmlWriter->writeAttribute('xmlns:o', 'urn:schemas-microsoft-com:office:office');
-        $xmlWriter->writeAttribute('xmlns:r', 'http://schemas.openxmlformats.org/officeDocument/2006/relationships');
-        $xmlWriter->writeAttribute('xmlns:m', 'http://schemas.openxmlformats.org/officeDocument/2006/math');
-        $xmlWriter->writeAttribute('xmlns:v', 'urn:schemas-microsoft-com:vml');
-        $xmlWriter->writeAttribute('xmlns:wp', $drawingSchema);
-        $xmlWriter->writeAttribute('xmlns:w10', 'urn:schemas-microsoft-com:office:word');
-        $xmlWriter->writeAttribute('xmlns:w', 'http://schemas.openxmlformats.org/wordprocessingml/2006/main');
-        $xmlWriter->writeAttribute('xmlns:wne', 'http://schemas.microsoft.com/office/word/2006/wordml');
+
+				$xmlWriter->writeAttribute("xmlns:w", "http://schemas.openxmlformats.org/wordprocessingml/2006/main");
+				$xmlWriter->writeAttribute("xmlns:aink", "http://schemas.microsoft.com/office/drawing/2016/ink");
+				$xmlWriter->writeAttribute("xmlns:am3d", "http://schemas.microsoft.com/office/drawing/2017/model3d");
+				$xmlWriter->writeAttribute("xmlns:cx", "http://schemas.microsoft.com/office/drawing/2014/chartex");
+				$xmlWriter->writeAttribute("xmlns:cx1", "http://schemas.microsoft.com/office/drawing/2015/9/8/chartex");
+				$xmlWriter->writeAttribute("xmlns:cx2", "http://schemas.microsoft.com/office/drawing/2015/10/21/chartex");
+				$xmlWriter->writeAttribute("xmlns:cx3", "http://schemas.microsoft.com/office/drawing/2016/5/9/chartex");
+				$xmlWriter->writeAttribute("xmlns:cx4", "http://schemas.microsoft.com/office/drawing/2016/5/10/chartex");
+				$xmlWriter->writeAttribute("xmlns:cx5", "http://schemas.microsoft.com/office/drawing/2016/5/11/chartex");
+				$xmlWriter->writeAttribute("xmlns:cx6", "http://schemas.microsoft.com/office/drawing/2016/5/12/chartex");
+				$xmlWriter->writeAttribute("xmlns:cx7", "http://schemas.microsoft.com/office/drawing/2016/5/13/chartex");
+				$xmlWriter->writeAttribute("xmlns:cx8", "http://schemas.microsoft.com/office/drawing/2016/5/14/chartex");
+				$xmlWriter->writeAttribute("xmlns:m", "http://schemas.openxmlformats.org/officeDocument/2006/math");
+				$xmlWriter->writeAttribute("xmlns:mc", "http://schemas.openxmlformats.org/markup-compatibility/2006");
+				$xmlWriter->writeAttribute("xmlns:o", "urn:schemas-microsoft-com:office:office");
+				$xmlWriter->writeAttribute("xmlns:r", "http://schemas.openxmlformats.org/officeDocument/2006/relationships");
+				$xmlWriter->writeAttribute("xmlns:v", "urn:schemas-microsoft-com:vml");
+				$xmlWriter->writeAttribute("xmlns:w10", "urn:schemas-microsoft-com:office:word");
+				$xmlWriter->writeAttribute("xmlns:w14", "http://schemas.microsoft.com/office/word/2010/wordml");
+				$xmlWriter->writeAttribute("xmlns:w15", "http://schemas.microsoft.com/office/word/2012/wordml");
+				$xmlWriter->writeAttribute("xmlns:w16", "http://schemas.microsoft.com/office/word/2018/wordml");
+				$xmlWriter->writeAttribute("xmlns:w16cex", "http://schemas.microsoft.com/office/word/2018/wordml/cex");
+				$xmlWriter->writeAttribute("xmlns:w16cid", "http://schemas.microsoft.com/office/word/2016/wordml/cid");
+				$xmlWriter->writeAttribute("xmlns:w16se", "http://schemas.microsoft.com/office/word/2015/wordml/symex");
+				$xmlWriter->writeAttribute("xmlns:wne", "http://schemas.microsoft.com/office/word/2006/wordml");
+				$xmlWriter->writeAttribute("xmlns:wp", "http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing");
+				$xmlWriter->writeAttribute("xmlns:wp14", "http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing");
+				$xmlWriter->writeAttribute("xmlns:wpc", "http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas");
+				$xmlWriter->writeAttribute("xmlns:wpg", "http://schemas.microsoft.com/office/word/2010/wordprocessingGroup");
+				$xmlWriter->writeAttribute("xmlns:wpi", "http://schemas.microsoft.com/office/word/2010/wordprocessingInk");
+				$xmlWriter->writeAttribute("xmlns:wps", "http://schemas.microsoft.com/office/word/2010/wordprocessingShape");
+				$xmlWriter->writeAttribute("mc:Ignorable", "w14 w15 w16se w16cid w16 w16cex wp14");
+
+			/*$xmlWriter->writeAttribute('xmlns:ve', 'http://schemas.openxmlformats.org/markup-compatibility/2006');
+			 $xmlWriter->writeAttribute('xmlns:o', 'urn:schemas-microsoft-com:office:office');
+			 $xmlWriter->writeAttribute('xmlns:r', 'http://schemas.openxmlformats.org/officeDocument/2006/relationships');
+			 $xmlWriter->writeAttribute('xmlns:m', 'http://schemas.openxmlformats.org/officeDocument/2006/math');
+			 $xmlWriter->writeAttribute('xmlns:v', 'urn:schemas-microsoft-com:vml');
+			 $xmlWriter->writeAttribute('xmlns:wp', $drawingSchema);
+			 $xmlWriter->writeAttribute('xmlns:w10', 'urn:schemas-microsoft-com:office:word');
+			 $xmlWriter->writeAttribute('xmlns:w', 'http://schemas.openxmlformats.org/wordprocessingml/2006/main');
+			 $xmlWriter->writeAttribute('xmlns:wne', 'http://schemas.microsoft.com/office/word/2006/wordml');*/
 
         $xmlWriter->startElement('w:body');
 

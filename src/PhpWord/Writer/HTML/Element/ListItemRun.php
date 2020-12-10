@@ -119,7 +119,7 @@ class ListItemRun extends Container
         //return "<p style='text-align: {$parentAlignment}; padding-left: {$padding}px;margin-top: {$css['margin-top']};margin-bottom: {$css['margin-bottom']};'><span>" . $text . '</span>' . $content . '</p>';
         //return "<div style=\"text-align: $parentAlignment; padding-left:{$padding}px;margin-top: 0;float: left;width: 100%;\"><div style='float:left;width: 1%;white-space:nowrap;'>$text</div><div style='float: left;width: 95%;'>$content</div></div>";
 
-        return "<table style='text-align: $parentAlignment;padding-left:{$padding}px;width: 100%;margin-top: {$css['margin-top']};margin-bottom: {$css['margin-bottom']};vertical-align: top;border: none;display:block;'><tr><td style='vertical-align: top;border: none;width: 1%;white-space:nowrap;'>$text</td><td style='vertical-align: top;border: none;'>$content</td></tr></table>";
+        return "<table style='text-align: $parentAlignment;padding-left:{$padding}px;width: 100%;margin-top: {$css['margin-top']};margin-bottom: {$css['margin-bottom']};vertical-align: top;border: none;display:block;'><tr><td style='vertical-align: top;border: none;width: 30px;white-space:nowrap;'>$text</td><td style='vertical-align: top;border: none;'>$content</td></tr></table>";
     }
 
     /**
